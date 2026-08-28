@@ -75,7 +75,7 @@
                                 <a href="{{ route('admin.kategori.index') }}"
                                     class="nav-link {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Kategori Buku</p>
+                                    <p>Data Kategori Buku</p>
                                 </a>
                             </li>
                             <li class="nav-item">
