@@ -669,13 +669,14 @@
                         <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="surveiDropdown">
                             <li><a class="dropdown-item" href="{{ url('/survei-kebutuhan') }}">Survei Kebutuhan</a>
                             </li>
-                            <li><a class="dropdown-item" href="{{ url('/survei-kepuasan') }}">Survei Kepuasan</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/survei-kepuasan') }}">Survei Kepuasan</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
 
                 <!-- Area Tombol Login / Dashboard -->
-                <div class="d-flex align-items-center mt-3 mt-lg-0 ms-lg-2">
+                <div class="d-flex justify-content-center align-items-center mt-3 mt-lg-0 ms-lg-2 mb-3 mb-lg-0">
                     @auth
                         @if (auth()->user()->role == 'admin')
                             <a href="{{ route('admin.dashboard') }}" class="btn btn-primary text-nowrap shadow-sm px-4"

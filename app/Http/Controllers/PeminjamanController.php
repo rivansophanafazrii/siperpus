@@ -85,10 +85,17 @@ class PeminjamanController extends Controller
      */
     public function destroy($id)
     {
-        $peminjaman = Peminjaman::findOrFail($id);
+        // Panggil data peminjaman beserta relasi bukunya
+        $peminjaman = Peminjaman::with('buku')->findOrFail($id);
+
+        // Tambahkan stok buku kembali sebelum data peminjaman dihapus
+        if ($peminjaman->buku) {
+            $peminjaman->buku->increment('stok');
+        }
+
         $peminjaman->delete();
 
-        return redirect()->back()->with('success', 'Data peminjaman berhasil dihapus.');
+        return redirect()->back()->with('success', 'Data peminjaman berhasil dihapus dan stok buku bertambah.');
     }
 
     /**
@@ -99,46 +106,22 @@ class PeminjamanController extends Controller
         $ids = $request->ids;
 
         if ($ids) {
+            // Ambil semua data peminjaman yang dipilih beserta relasi bukunya
+            $peminjamans = Peminjaman::with('buku')->whereIn('id', $ids)->get();
+
+            // Lakukan perulangan untuk menambah stok pada setiap buku terkait
+            foreach ($peminjamans as $peminjaman) {
+                if ($peminjaman->buku) {
+                    $peminjaman->buku->increment('stok');
+                }
+            }
+
+            // Hapus data peminjaman secara massal setelah stok berhasil dikembalikan
             Peminjaman::whereIn('id', $ids)->delete();
-            return redirect()->back()->with('success', count($ids) . ' data peminjaman berhasil dihapus.');
+
+            return redirect()->back()->with('success', count($ids) . ' data peminjaman berhasil dihapus dan stok buku dikembalikan.');
         }
 
         return redirect()->back()->with('error', 'Tidak ada data yang dipilih untuk dihapus.');
-    }
-
-
-    public function kembali($id)
-    {
-        $peminjaman = Peminjaman::findOrFail($id);
-
-        if ($peminjaman->status === 'Dikembalikan') {
-            return back()->with('error', 'Buku ini sudah dikembalikan.');
-        }
-
-        $tarif_denda_per_hari = 500;
-        $denda = 0;
-
-        $tanggal_sekarang = Carbon::now();
-        $tenggat_waktu = Carbon::parse($peminjaman->tenggat_waktu);
-
-        if ($tanggal_sekarang->greaterThan($tenggat_waktu)) {
-            $selisih_hari = $tenggat_waktu->diffInDays($tanggal_sekarang);
-            $denda = $selisih_hari * $tarif_denda_per_hari;
-        }
-
-        $peminjaman->update([
-            'status' => 'Dikembalikan',
-            'tanggal_dikembalikan' => $tanggal_sekarang->toDateString(),
-            'denda' => $denda
-        ]);
-
-        $peminjaman->buku->increment('stok');
-
-        $pesan = 'Buku berhasil dikembalikan!';
-        if ($denda > 0) {
-            $pesan .= ' Terlambat ' . $selisih_hari . ' hari, dikenakan denda Rp ' . number_format($denda, 0, ',', '.');
-        }
-
-        return redirect()->route('admin.peminjaman.index')->with('success', $pesan);
     }
 }
