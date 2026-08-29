@@ -417,7 +417,7 @@
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
                     text: "Menghapus " + count +
-                        " data pengguna yang dipilih tidak dapat dibatalkan!",
+                        " data buku yang dipilih tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
@@ -435,11 +435,11 @@
             // Trigger Single Delete Action dengan SweetAlert
             $('.btn-delete-single').on('click', function() {
                 let id = $(this).data('id');
-                let url = "{{ url('admin/anggota') }}/" + id;
+                let url = "{{ url('admin/buku') }}/" + id;
 
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
-                    text: "Data pengguna ini akan dihapus permanen!",
+                    text: "Data buku ini akan dihapus permanen!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
