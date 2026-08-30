@@ -165,6 +165,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/katalog/{slug}', [AnggotaKatalogController::class, 'show'])->name('katalog.show');
         // Rute Peminjaman & Riwayat
         Route::get('/peminjaman', [AnggotaPeminjamanController::class, 'index'])->name('peminjaman.index');
+        Route::post('/peminjaman', [App\Http\Controllers\AnggotaPeminjamanController::class, 'store'])->name('peminjaman.store');
+        Route::post('/peminjaman/store', [App\Http\Controllers\AnggotaPeminjamanController::class, 'store'])->name('peminjaman.store');
+        Route::put('/peminjaman/{id}/kembali', [App\Http\Controllers\AnggotaPeminjamanController::class, 'kembali'])->name('peminjaman.kembali');
         Route::get('/riwayat-sirkulasi', [AnggotaPeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
         // Rute Profil Saya
         Route::get('/profil', [AnggotaProfilController::class, 'index'])->name('profil.index');

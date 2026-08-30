@@ -35,7 +35,7 @@
     </style>
 
     <div class="content-wrapper bg-light">
-        <!-- Content Header -->
+        <!-- Header Konten -->
         <div class="content-header pt-4 pb-3">
             <div class="container-fluid">
                 <div class="row align-items-center">
@@ -55,14 +55,43 @@
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Konten Utama -->
         <section class="content">
             <div class="container-fluid">
+
+                <!-- Pemberitahuan Status -->
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-lg"
+                        role="alert">
+                        <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-lg"
+                        role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
+                <!-- Panel Tabel Peminjaman -->
                 <div class="card border-0 shadow-sm rounded-lg mb-5">
-                    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+                    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
                         <h5 class="font-weight-bold text-dark mb-0">
                             <i class="fas fa-book-reader text-primary mr-2"></i>Sedang Dipinjam & Perlu Dikembalikan
                         </h5>
+
+                        <!-- Pemicu Modal Pengajuan Pinjaman -->
+                        <button type="button" class="btn btn-primary btn-sm px-3 shadow-sm font-weight-bold rounded"
+                            data-toggle="modal" data-target="#modalPinjamBuku">
+                            <i class="fas fa-plus mr-1"></i> Pinjam Buku Baru
+                        </button>
                     </div>
 
                     <div class="card-body p-0">
@@ -81,8 +110,10 @@
                                         </th>
                                         <th width="15%"
                                             class="text-center border-top-0 text-muted small font-weight-bold">DENDA</th>
-                                        <th width="15%"
+                                        <th width="7%"
                                             class="text-center border-top-0 text-muted small font-weight-bold">STATUS</th>
+                                        <th width="8%"
+                                            class="text-center border-top-0 text-muted small font-weight-bold">AKSI</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -151,6 +182,20 @@
                                                             class="fas fa-book-reader mr-1"></i> Dipinjam</span>
                                                 @endif
                                             </td>
+                                            <!-- Kolom Aksi Pengembalian dengan SweetAlert -->
+                                            <td class="text-center align-middle">
+                                                <form id="form-kembali-{{ $item->id }}"
+                                                    action="{{ route('anggota.peminjaman.kembali', $item->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="button"
+                                                        onclick="konfirmasiKembali('{{ $item->id }}')"
+                                                        class="btn btn-sm btn-success font-weight-bold shadow-sm rounded-pill px-3">
+                                                        <i class="fas fa-undo-alt mr-1"></i> Kembalikan
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -186,4 +231,81 @@
             </div>
         </section>
     </div>
+
+    <!-- Modul Form Peminjaman Buku -->
+    <div class="modal fade" id="modalPinjamBuku" tabindex="-1" role="dialog" aria-labelledby="modalPinjamBukuLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg rounded-lg">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title font-weight-bold" id="modalPinjamBukuLabel">
+                        <i class="fas fa-hand-holding mr-2"></i>Form Pengajuan Peminjaman
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="{{ route('anggota.peminjaman.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body p-4">
+                        <p class="text-muted small mb-4">Silakan pilih buku yang tersedia dan tentukan durasi peminjaman.
+                            Buku yang sedang kosong tidak akan muncul dalam daftar pilihan.</p>
+
+                        <div class="form-group mb-3">
+                            <label for="buku_id" class="font-weight-bold text-dark">Pilih Koleksi Buku</label>
+                            <select name="buku_id" id="buku_id" class="form-control" required>
+                                <option value="" disabled selected>-- Cari dan Pilih Buku --</option>
+                                <!-- Looping daftar buku dari Controller -->
+                                @if (isset($buku_tersedia))
+                                    @foreach ($buku_tersedia as $buku)
+                                        <option value="{{ $buku->id }}">[{{ $buku->kode_buku }}] -
+                                            {{ $buku->judul }} (Sisa: {{ $buku->stok }})</option>
+                                    @endforeach
+                                @else
+                                    <option value="" disabled>Data buku belum diload dari controller.</option>
+                                @endif
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <label for="lama_pinjam" class="font-weight-bold text-dark">Durasi Peminjaman (Hari)</label>
+                            <select name="lama_pinjam" id="lama_pinjam" class="form-control" required>
+                                <option value="3">3 Hari</option>
+                                <option value="7">7 Hari (1 Minggu)</option>
+                                <option value="14">14 Hari (2 Minggu)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light border-top-0 py-3">
+                        <button type="button" class="btn btn-secondary shadow-sm rounded-pill px-4"
+                            data-dismiss="modal">Batal</button>
+                        <button type="submit"
+                            class="btn btn-primary shadow-sm rounded-pill px-4 font-weight-bold">Konfirmasi Pinjam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @push('scripts')
+        <script>
+            function konfirmasiKembali(id) {
+                Swal.fire({
+                    title: 'Konfirmasi Pengembalian',
+                    text: "Apakah Anda yakin ingin mengembalikan buku ini sekarang?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Kembalikan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('form-kembali-' + id).submit();
+                    }
+                });
+            }
+        </script>
+    @endpush
 @endsection
