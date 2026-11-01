@@ -232,25 +232,38 @@
                                         <div class="input-group"
                                             style="border-radius: 0.35rem; overflow: hidden; width: 50%;">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text bg-light border-right-0"><i
-                                                        class="fas fa-clock text-muted"></i></span>
+                                                <span class="input-group-text bg-light border-right-0">
+                                                    <i class="fas fa-clock text-muted"></i>
+                                                </span>
                                             </div>
-                                            <input type="number" name="lama_pinjam"
+
+                                            <!-- Tambahkan atribut list="opsi_durasi" pada input -->
+                                            <input type="number" name="lama_pinjam" list="opsi_durasi"
                                                 class="form-control bg-light border-left-0 border-right-0 @error('lama_pinjam') is-invalid @enderror"
                                                 value="{{ old('lama_pinjam', 7) }}" min="1" max="1000"
-                                                required>
+                                                required placeholder="Ketik atau pilih...">
+
+                                            <!-- Datalist untuk memunculkan opsi dropdown -->
+                                            <datalist id="opsi_durasi">
+                                                <option value="7">1 Minggu (7 Hari)</option>
+                                                <option value="30">1 Bulan (30 Hari)</option>
+                                                <option value="365">1 Tahun (365 Hari)</option>
+                                            </datalist>
+
                                             <div class="input-group-append">
                                                 <span
                                                     class="input-group-text bg-light text-muted border-left-0 font-weight-bold">Hari</span>
                                             </div>
                                         </div>
+
                                         @error('lama_pinjam')
                                             <div class="invalid-feedback font-weight-bold d-block">{{ $message }}</div>
                                         @enderror
-                                        <small class="text-muted mt-2 d-block"><i
-                                                class="fas fa-asterisk text-warning mr-1"
-                                                style="font-size: 10px;"></i>Batas maksimal peminjaman yang disarankan
-                                            adalah 14 hari.</small>
+
+                                        <small class="text-muted mt-2 d-block">
+                                            <i class="fas fa-asterisk text-warning mr-1" style="font-size: 10px;"></i>
+                                            Pilih durasi dari daftar atau ketik jumlah hari secara manual.
+                                        </small>
                                     </div>
 
                                 </div>
