@@ -50,7 +50,7 @@ class PeminjamanController extends Controller
         $request->validate([
             'user_id'     => 'required|exists:users,id',
             'buku_id'     => 'required|exists:buku,id',
-            'lama_pinjam' => 'required|integer|min:1|max:14',
+            'lama_pinjam' => 'required|integer|min:1|max:1000',
         ]);
 
         $buku = Buku::findOrFail($request->buku_id);
