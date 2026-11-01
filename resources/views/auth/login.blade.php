@@ -250,8 +250,12 @@
                         <label class="form-label fw-bold text-dark" style="font-size: 0.88rem;">Password</label>
                         <div class="position-relative">
                             <i class="fa-solid fa-lock input-group-icon"></i>
-                            <input type="password" name="password" class="form-control form-control-modern"
-                                placeholder="Masukan Password" required>
+                            <!-- Tambahkan id="password" -->
+                            <input type="password" name="password" id="password"
+                                class="form-control form-control-modern" placeholder="Masukan Password" required>
+                            <!-- Tambahkan ikon toggle di sebelah kanan -->
+                            <i class="fa-solid fa-eye-slash toggle-password" id="togglePassword"
+                                style="position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--color-text-muted); z-index: 10;"></i>
                         </div>
                     </div>
 
@@ -277,6 +281,31 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script Toggle Password -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+
+            togglePassword.addEventListener('click', function(e) {
+                // Ubah tipe input antara password dan text
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // Ubah ikon mata
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+
+                // Ubah warna ikon saat di-klik agar terlihat aktif
+                if (type === 'text') {
+                    this.style.color = 'var(--color-primary)';
+                } else {
+                    this.style.color = 'var(--color-text-muted)';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
