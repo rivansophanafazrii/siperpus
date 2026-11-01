@@ -269,11 +269,11 @@
                         </div>
 
                         <div class="form-group mb-0">
-                            <label for="lama_pinjam" class="font-weight-bold text-dark">Durasi Peminjaman (Hari)</label>
+                            <label for="lama_pinjam" class="font-weight-bold text-dark">Durasi Peminjaman</label>
                             <select name="lama_pinjam" id="lama_pinjam" class="form-control" required>
-                                <option value="3">3 Hari</option>
-                                <option value="7">7 Hari (1 Minggu)</option>
-                                <option value="14">14 Hari (2 Minggu)</option>
+                                <option value="7">1 Minggu</option>
+                                <option value="30">1 Bulan</option>
+                                <option value="365">1 Tahun</option>
                             </select>
                         </div>
                     </div>
